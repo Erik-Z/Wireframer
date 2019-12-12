@@ -12,9 +12,10 @@ class WireframeLinks extends React.Component {
             <div className="wireframes section">
                 {wireframes && wireframes.map(wireframe => (
                     <Link to={'/wireframe/' + wireframe.id} key={wireframe.id}>
-                        <WireframeCard wireframe={wireframe} />
+                        <WireframeCard wireframe={wireframe}/>
                     </Link>
                 ))}
+                
             </div>
         );
     }

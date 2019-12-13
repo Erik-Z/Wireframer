@@ -5,7 +5,6 @@ import { Redirect } from 'react-router-dom';
 import { firestoreConnect } from 'react-redux-firebase';
 import WireframeLinks from './WireframeLinks'
 import { getFirestore } from 'redux-firestore';
-
 class HomeScreen extends Component {
     handleNewWireframe = () => {
         let newWireframeData = {

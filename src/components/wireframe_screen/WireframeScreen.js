@@ -10,8 +10,22 @@ import Draggable from 'react-draggable'
 class WireframeScreen extends Component {
     state = {
         name: this.props.wireframe.name,
-        components: this.props.wireframe.components
+        components: this.props.wireframe.components,
+        deltaPosition: {
+            x: 0, y: 100
+        }
     }
+
+    handleDrag = (e, ui) => {
+        const {x, y} = this.state.deltaPosition;
+        this.setState(
+        {
+            deltaPosition: {
+            x: x + ui.deltaX,
+            y: y + ui.deltaY,}
+        });
+    };
+
     changedTime = false;
 
     updateTime = () => {
@@ -29,10 +43,6 @@ class WireframeScreen extends Component {
             ...state,
             [target.id]: target.value,
         }));
-
-        // const fireStore = getFirestore();
-        // let dbitem = fireStore.collection('todoLists').doc(this.props.todoList.id);
-        // dbitem.update({ [target.id]: target.value });
     }
 
     handleClose = () => {
@@ -48,6 +58,44 @@ class WireframeScreen extends Component {
                 components: this.state.components
             }
         ).then(() => {this.props.history.push({pathname: '/'})})
+    }
+
+    handleAddContainer = () => {
+        var nextitemkey
+        if (this.state.components.length == 0){
+            nextitemkey = 0
+        } else {
+            nextitemkey = Math.max.apply(Math, this.state.components.map(function(o) { return o.key; })) + 1
+        }
+
+        
+        let containerItem = {
+            name: 'container',
+            height: 20,
+            width: 20,
+            xposition: 0,
+            yposition: 0,
+            key: nextitemkey
+        }
+        let list = this.state.components
+        list.push(containerItem)
+        this.setState({components: list})
+    }
+
+    handleDrag2 = (e, ui, key) => {
+        console.log(ui)
+        // let currentComponent = this.state.components.filter(obj => {
+        //     return obj.key == key
+        // });
+        // currentComponent.xposition = currentComponent.xposition + ui.deltaX
+        // currentComponent.yposition = currentComponent.yposition + ui.deltaY
+        // let components = this.state.components
+        // let index = components.indexOf(currentComponent)
+        // components[index] = currentComponent
+        // this.setState(
+        // {
+        //     components: components
+        // });
     }
 
     render() {
@@ -72,17 +120,31 @@ class WireframeScreen extends Component {
                             <i className="material-icons" style = {{marginLeft: '20px'}}>zoom_out</i>
                             <span style = {{marginLeft: '20px', cursor: "pointer"}} onClick={this.handleSave}>Save</span>
                             <span style = {{marginLeft: '20px', cursor: "pointer"}} onClick={this.handleClose}>Close</span>
-                        </div> 
+                        </div>
+                        <div className="grey">
+                            <h6 style={{textAlign: "center"}}>Add Controller</h6>
+                            <div className="box" style={{height: '75px', marginLeft: '65px',}} onClick={this.handleAddContainer}></div>
+                            <p style={{textAlign: "center"}}>container</p>
+                        </div>
                     </div>
                     <div className="box col s6" style={{height: '600px', width: '600px', backgroundColor: "white", position: 'relative', overflow: 'auto', padding: '0'}}>
                         <div style={{height: '1000px', width: '1000px', padding: '10px'}}>
-                            <Draggable bounds="parent">
-                                
-                                    <div className="box">
-                                        I can only be moved within my offsetParent.
-                                    </div>
-                                
+                            <Draggable bounds="parent" defaultPosition={{x: this.state.deltaPosition.x, y: this.state.deltaPosition.y}} onDrag={this.handleDrag}>
+                                <div className="box">
+                                    x: {this.state.deltaPosition.x}, y: {this.state.deltaPosition.y}
+                                </div>
                             </Draggable>
+                            {
+                                this.state.components.map(component => {
+                                    return (
+                                    <Draggable bounds="parent" defaultPosition={{x: component.xposition, y: component.yposition}} onDrag={this.handleDrag2.bind(this, component.key)}>
+                                        <div className="box">
+                                            x: {component.xposition}, y: {component.yposition}
+                                        </div>
+                                    </Draggable>
+                                    )
+                                })
+                            }
                         </div>
                     </div>
                     <div className="grey col s3">

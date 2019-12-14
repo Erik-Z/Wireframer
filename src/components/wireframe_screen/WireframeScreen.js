@@ -200,7 +200,7 @@ class WireframeScreen extends Component {
                             <h6 style={{textAlign: "center"}}>Add Controller</h6>
                             <div className="box" style={{height: '75px', marginLeft: '65px',}} onClick={this.handleAddContainer}></div>
                             <p style={{textAlign: "center", fontWeight: "bold"}}>Container</p>
-                            <p style={{textAlign: "center"}}>Prompt for input: </p>
+                            <p style={{textAlign: "center"}} onClick={this.handleAddLabel}>Prompt for input: </p>
                             <p style={{textAlign: "center", fontWeight: "bold"}}>Label</p>
                         </div>
                     </div>
@@ -237,7 +237,40 @@ class WireframeScreen extends Component {
                                         </Rnd>
                                         )
                                     } else if (component.name == 'label') {
-
+                                        var style
+                                        var fontColor =  component.fontColor
+                                        var fontSize = parseInt(component.fontSize)
+                                        if(this.state.selectedComponent && this.state.selectedComponent.key === component.key){
+                                            style = {
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+                                                outline: "2px dashed blue",
+                                                color: fontColor,
+                                                fontSize: fontSize
+                                            };
+                                        } else {
+                                            style = {
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+                                                color: fontColor,
+                                                fontSize: fontSize
+                                            };
+                                        }
+                                        return (
+                                            <Rnd
+                                                key={component.key}
+                                                style={style}
+                                                size={{ width: component.width, height: component.height }}
+                                                position={{ x: component.xposition, y: component.yposition}}
+                                                onDragStart={() => this.handleSelectComponent(component)}
+                                                onDrag = {this.handleDrag}
+                                                onResizeStart = {() => this.handleSelectComponent(component)}
+                                                onResizeStop={this.handleResize}>
+                                                    {component.text}
+                                            </Rnd>
+                                        )
                                     }
                                 })
                             }
@@ -261,6 +294,18 @@ class WireframeScreen extends Component {
                                 <input className="text_20" type="number" min='0' name="borderRadius" id="borderRadius" onChange={this.handleComponentChange} value={this.state.selectedComponent.borderRadius} />
                             </div>
                         ) 
+                        : this.state.selectedComponent.name == 'label' ? (
+                            <div>
+                                <label className="active text_16" htmlFor="name">Text: </label>
+                                <input className="text_20" type="text" name="text" id="text" onChange={this.handleComponentChange} value={this.state.selectedComponent.text} />
+                                <div></div>
+                                <label className="active text_16" htmlFor="name">Font Size: </label>
+                                <input className="text_20" type="number" min='1' name="fontSize" id="fontSize" onChange={this.handleComponentChange} value={this.state.selectedComponent.fontSize} />
+                                <div></div>
+                                <label className="active text_16" htmlFor="name">Font Color: </label>
+                                <input className="text_20" type="color" name="fontColor" id="fontColor" onChange={this.handleComponentChange} value={this.state.selectedComponent.fontColor} />
+                            </div>
+                        )
                         : (<div></div>)
                         : (<div></div>)
                         }

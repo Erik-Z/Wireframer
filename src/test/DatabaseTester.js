@@ -26,7 +26,9 @@ class DatabaseTester extends React.Component {
                 name: wireframe.name,
                 owner: wireframe.owner,
                 components: wireframe.components,
-                time: Date.now() 
+                time: Date.now(),
+                height: wireframe.height,
+                width: wireframe.width
             }).then(() => {
                 console.log("DATABASE RESET");
             }).catch((err) => {

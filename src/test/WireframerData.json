@@ -4,6 +4,8 @@
 		"key": 0,
 		"name": "Website",
 		"owner": "siiCeFHmAkeiGqpTVWXzNQPPD4l2",
+		"height" : 600,
+		"width" : 600,
 		"components": [
 			{
 				"name": "textfield",
@@ -52,6 +54,8 @@
 		"key": 1,
 		"name": "Best Mobile Game Ever",
 		"owner": "siiCeFHmAkeiGqpTVWXzNQPPD4l2",
+		"height" : 600,
+		"width" : 600,
 		"components": [
 			{
 				"name": "container",
@@ -71,6 +75,8 @@
 		"key": 2,
 		"name": "Non-adult related app",
 		"owner": "siiCeFHmAkeiGqpTVWXzNQPPD4l2",
+		"height" : 600,
+		"width" : 600,
 		"components": [
 			{
 				"name": "button",

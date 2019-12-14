@@ -12,6 +12,8 @@ class HomeScreen extends Component {
             owner: this.props.auth.uid,
             components: [],
             time: Date.now(),
+            height: 600,
+            width: 600
         }
         const fireStore = getFirestore();
         let newWireframe = fireStore.collection("wireframes").doc();

@@ -12,9 +12,17 @@ class WireframeScreen extends Component {
         components: this.props.wireframe.components,
         selectedComponent: null,
         isCurrentlyDragging: false,
+        height: this.props.wireframe.height,
+        width: this.props.wireframe.width,
+        proposedHeight: "600",
+        proposedWidth: "600"
     }
 
     changedTime = false;
+
+    handleChangeDiagramDimensions = () => {
+        this.setState({height: parseInt(this.state.proposedHeight), width: parseInt(this.state.proposedWidth)})
+    }
 
     updateTime = () => {
         let fireStore = getFirestore();
@@ -42,6 +50,8 @@ class WireframeScreen extends Component {
         dbitem.update(
             {
                 name: this.state.name,
+                height: this.state.height,
+                width: this.state.width,
                 components: this.state.components
             }
         ).then(() => {this.props.history.push({pathname: '/'})})
@@ -107,13 +117,41 @@ class WireframeScreen extends Component {
             name: 'button',
             text: 'submit',
             fontSize: 14,
-            fontColor: '#ffffff',
+            fontColor: '#000000',
             background: '#d3d3d3',
             borderColor: '#000000',
             borderThickness: 1,
             borderRadius: 0,
             height: 40,
             width: 100,
+            xposition: 0,
+            yposition: 0,
+            key: nextitemkey
+        }
+        this.handleSelectComponent(buttonItem)
+        let list = this.state.components
+        list.push(buttonItem)
+        this.setState({components: list})
+    }
+
+    handleAddTextfield = () => {
+        var nextitemkey
+        if (this.state.components.length === 0){
+            nextitemkey = 0
+        } else {
+            nextitemkey = Math.max.apply(Math, this.state.components.map(function(o) { return o.key; })) + 1
+        }
+        let buttonItem = {
+            name: 'textfield',
+            text: 'input',
+            fontSize: 14,
+            fontColor: '#d3d3d3',
+            background: '#ffffff',
+            borderColor: '#d3d3d3',
+            borderThickness: 1,
+            borderRadius: 1,
+            height: 40,
+            width: 200,
             xposition: 0,
             yposition: 0,
             key: nextitemkey
@@ -211,12 +249,18 @@ class WireframeScreen extends Component {
             this.changedTime = true;
             this.updateTime();
         }
-
+        var height = this.state.height
+        var width = this.state.width
         return (
                 <div className="row" onClick={this.notCurrentlyDragging}>
                     <div className="input-field col s3">
                         <label className="active text_16" htmlFor="name">Wireframe Name</label>
                         <input className="text_20" type="text" name="name" id="name" onChange={this.handleChange} defaultValue={wireframe.name} />
+                        <div>Height</div>
+                        <input className="text_20" type="text" name="proposedHeight" id="proposedHeight" onChange={this.handleChange} defaultValue={this.state.proposedHeight} />
+                        <div>Width</div>
+                        <input className="text_20" type="text" name="proposedWidth" id="proposedWidth" onChange={this.handleChange} defaultValue={this.state.proposedWidth} />
+                        <button onClick={this.handleChangeDiagramDimensions}> Update Diagram </button>
                         <div>
                             <i className="material-icons">zoom_in</i>
                             <i className="material-icons" style = {{marginLeft: '20px'}}>zoom_out</i>
@@ -232,11 +276,13 @@ class WireframeScreen extends Component {
                             <div className="box" onClick={this.handleAddButton}
                             style={{cursor: 'pointer', height: '40px', width: '100px', marginLeft: '100px', background: '#d3d3d3', textAlign: 'center'}}>Submit</div>
                             <p style={{textAlign: "center", fontWeight: "bold"}}>Button</p>
+                            <div className="box" onClick={this.handleAddTextfield} 
+                            style={{cursor: 'pointer', height: '40px', width: '200px', marginLeft: '50px', color: '#d3d3d3'}}>input</div>
+                            <p style={{textAlign: "center", fontWeight: "bold"}}>Textfield</p>
                         </div>
                     </div>
                     <div className="box col s6" onClick={this.handleUnselectComponent}
-                    style={{height: '600px', width: '600px', backgroundColor: "white", position: 'relative', overflow: 'auto', padding: '0'}}>
-                        <div style={{height: '1000px', width: '1000px', padding: '10px'}}>
+                    style={{height: height, width: width, backgroundColor: "white", position: 'relative', overflow: 'auto', padding: '0'}}>
                             {
                                 this.state.components.map(component => {
                                     if(component.name === 'container') {
@@ -244,16 +290,32 @@ class WireframeScreen extends Component {
                                         var borderColor = component.borderColor
                                         var borderRadius = parseInt(component.borderRadius)
                                         var borderThickness = parseInt(component.borderThickness)
-                                        const style = {
-                                            display: "flex",
-                                            alignItems: "center",
-                                            justifyContent: "center",
-                                            border: "solid",
-                                            borderColor: borderColor,
-                                            borderRadius: borderRadius,
-                                            borderWidth: borderThickness,
-                                            background: background
-                                        };
+                                        var style
+                                        if(this.state.selectedComponent && this.state.selectedComponent.key === component.key){
+                                            style = {
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+                                                outline: "2px dashed blue",
+                                                border: "solid",
+                                                borderColor: borderColor,
+                                                borderRadius: borderRadius,
+                                                borderWidth: borderThickness,
+                                                background: background
+                                            };
+                                        } else {
+                                            style = {
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+                                                border: "solid",
+                                                borderColor: borderColor,
+                                                borderRadius: borderRadius,
+                                                borderWidth: borderThickness,
+                                                background: background
+                                            };
+                                        }
+                                        
                                         return (
                                         <Rnd
                                             key={component.key}
@@ -309,18 +371,36 @@ class WireframeScreen extends Component {
                                         var borderThickness = parseInt(component.borderThickness)
                                         var fontColor =  component.fontColor
                                         var fontSize = parseInt(component.fontSize)
-                                        var style = {
-                                            display: "flex",
-                                            alignItems: "center",
-                                            justifyContent: "center",
-                                            color: fontColor,
-                                            fontSize: fontSize,
-                                            border: "solid",
-                                            borderColor: borderColor,
-                                            borderRadius: borderRadius,
-                                            borderWidth: borderThickness,
-                                            background: background
-                                        };
+                                        var style
+                                        if(this.state.selectedComponent && this.state.selectedComponent.key === component.key){
+                                            style = {
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+                                                color: fontColor,
+                                                fontSize: fontSize,
+                                                outline: "2px dashed blue",
+                                                border: "solid",
+                                                borderColor: borderColor,
+                                                borderRadius: borderRadius,
+                                                borderWidth: borderThickness,
+                                                background: background
+                                            };
+                                        } else {
+                                            style = {
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+                                                color: fontColor,
+                                                fontSize: fontSize,
+                                                border: "solid",
+                                                borderColor: borderColor,
+                                                borderRadius: borderRadius,
+                                                borderWidth: borderThickness,
+                                                background: background
+                                            };
+                                        }
+                                        
                                         return (
                                             <Rnd
                                                 key={component.key}
@@ -335,11 +415,55 @@ class WireframeScreen extends Component {
                                             </Rnd>
                                         )
                                     } else {
-                                        
+                                        var background = component.background
+                                        var borderColor = component.borderColor
+                                        var borderRadius = parseInt(component.borderRadius)
+                                        var borderThickness = parseInt(component.borderThickness)
+                                        var fontColor =  component.fontColor
+                                        var fontSize = parseInt(component.fontSize)
+                                        var style
+                                        if(this.state.selectedComponent && this.state.selectedComponent.key === component.key){
+                                            style = {
+                                                display: "flex",
+                                                alignItems: "center",
+                                                color: fontColor,
+                                                fontSize: fontSize,
+                                                outline: "2px dashed blue",
+                                                border: "solid",
+                                                borderColor: borderColor,
+                                                borderRadius: borderRadius,
+                                                borderWidth: borderThickness,
+                                                background: background
+                                            };
+                                        } else {
+                                            style = {
+                                                display: "flex",
+                                                alignItems: "center",
+                                                color: fontColor,
+                                                fontSize: fontSize,
+                                                border: "solid",
+                                                borderColor: borderColor,
+                                                borderRadius: borderRadius,
+                                                borderWidth: borderThickness,
+                                                background: background
+                                            };
+                                        }
+                                        return (
+                                            <Rnd
+                                                key={component.key}
+                                                style={style}
+                                                size={{ width: component.width, height: component.height }}
+                                                position={{ x: component.xposition, y: component.yposition}}
+                                                onDragStart={() => this.handleSelectComponent(component)}
+                                                onDrag = {this.handleDrag}
+                                                onResizeStart = {() => this.handleSelectComponent(component)}
+                                                onResizeStop={this.handleResize}>
+                                                    {component.text}
+                                            </Rnd>
+                                        )
                                     }
                                 })
                             }
-                        </div>
                     </div>
                     <div className="white col s3">
                         <h6>Properties</h6>
@@ -371,7 +495,7 @@ class WireframeScreen extends Component {
                                 <input className="text_20" type="color" name="fontColor" id="fontColor" onChange={this.handleComponentChange} value={this.state.selectedComponent.fontColor} />
                             </div>
                         )
-                        : this.state.selectedComponent.name == 'button' ? (
+                        : this.state.selectedComponent.name == 'button' || this.state.selectedComponent.name == 'textfield' ? (
                             <div>
                                 <label className="active text_16" htmlFor="name">Text: </label>
                                 <input className="text_20" type="text" name="text" id="text" onChange={this.handleComponentChange} value={this.state.selectedComponent.text} />

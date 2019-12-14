@@ -71,11 +71,6 @@ class WireframeScreen extends Component {
     }
 
     handleResize = (e, direction, ref, delta, position) => {
-        // this.setState({
-        //     width: ref.style.width,
-        //     height: ref.style.height,
-        //     ...position
-        // });
         this.setState({
             selectedComponent: {
             ...this.state.selectedComponent,
@@ -123,6 +118,24 @@ class WireframeScreen extends Component {
         }
     }
 
+    deleteComponent = (e) => {
+        if(e.keyCode == 46){
+            if(this.state.selectedComponent){
+                let list = this.state.components
+                let index = list.map(o => {return o.key}).indexOf(this.state.selectedComponent.key)
+                list.splice(index, 1)
+                this.setState({components: list, selectedComponent: null})
+            }
+        }
+    }
+
+    componentDidMount(){
+        document.addEventListener('keydown',this.deleteComponent);
+    }
+
+    componentWillUnmount() {
+        document.removeEventListener('keydown', this.deleteComponent);
+    }
     render() {
         const auth = this.props.auth;
         let wireframe = this.props.wireframe;
@@ -165,17 +178,6 @@ class WireframeScreen extends Component {
                                         background: "#f0f0f0"
                                     };
                                     return (
-                                    // <Draggable bounds="parent" defaultPosition={{x: component.xposition, y: component.yposition}} 
-                                    // onDrag={this.handleDrag2} onStart={() => this.handleSelectComponent(component)} key={component.key}>
-                                    //     <div className="box">
-                                    //         x: {component.xposition}, y: {component.yposition}
-                                    //     </div>
-                                    //     <ResizableBox width={200} height={200} axis="both">
-                                    //         <div className="box">
-                                    //             x: {component.xposition}, y: {component.yposition}
-                                    //         </div>
-                                    //     </ResizableBox>
-                                    // </Draggable>
                                     <Rnd
                                         style={style}
                                         size={{ width: component.width, height: component.height }}

@@ -137,11 +137,6 @@ class WireframeScreen extends Component {
                     </div>
                     <div className="box col s6" style={{height: '600px', width: '600px', backgroundColor: "white", position: 'relative', overflow: 'auto', padding: '0'}}>
                         <div style={{height: '1000px', width: '1000px', padding: '10px'}}>
-                            <Draggable bounds="parent" defaultPosition={{x: this.state.deltaPosition.x, y: this.state.deltaPosition.y}} onDrag={this.handleDrag}>
-                                <div className="box">
-                                    x: {this.state.deltaPosition.x}, y: {this.state.deltaPosition.y}
-                                </div>
-                            </Draggable>
                             {
                                 this.state.components.map(component => {
                                     return (

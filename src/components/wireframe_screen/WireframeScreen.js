@@ -5,7 +5,15 @@ import { compose } from 'redux';
 import { firestoreConnect } from 'react-redux-firebase';
 import { getFirestore } from 'redux-firestore';
 import Draggable from 'react-draggable'
+import { Rnd } from "react-rnd";
 
+const style = {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    border: "solid 1px #ddd",
+    background: "#f0f0f0"
+};
 
 class WireframeScreen extends Component {
     state = {
@@ -13,18 +21,15 @@ class WireframeScreen extends Component {
         components: this.props.wireframe.components,
         selectedComponent: null,
         isCurrentlyDragging: false,
-
+        width: 200,
+        height: 200,
+        x: 10,
+        y: 10
     }
 
-    handleDrag = (e, ui) => {
-        const {x, y} = this.state.deltaPosition;
-        this.setState(
-        {
-            deltaPosition: {
-            x: x + ui.deltaX,
-            y: y + ui.deltaY,}
-        });
-    };
+    
+
+    
 
     changedTime = false;
 
@@ -81,7 +86,15 @@ class WireframeScreen extends Component {
         this.setState({components: list})
     }
 
-    handleDrag2 = (e, ui) => {
+    handleResize = (e, direction, ref, delta, position) => {
+        this.setState({
+            width: ref.style.width,
+            height: ref.style.height,
+            ...position
+        });
+    }
+
+    handleDrag = (e, ui) => {
         const x = this.state.selectedComponent.xposition
         const y = this.state.selectedComponent.yposition
         this.setState(
@@ -151,13 +164,41 @@ class WireframeScreen extends Component {
                         <div style={{height: '1000px', width: '1000px', padding: '10px'}}>
                             {
                                 this.state.components.map(component => {
+                                    const style = {
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        border: "solid 1px #ddd",
+                                        background: "#f0f0f0"
+                                    };
                                     return (
-                                    <Draggable bounds="parent" defaultPosition={{x: component.xposition, y: component.yposition}} 
-                                    onDrag={this.handleDrag2} onStart={() => this.handleSelectComponent(component)} key={component.key}>
-                                        <div className="box">
-                                            x: {component.xposition}, y: {component.yposition}
-                                        </div>
-                                    </Draggable>
+                                    // <Draggable bounds="parent" defaultPosition={{x: component.xposition, y: component.yposition}} 
+                                    // onDrag={this.handleDrag2} onStart={() => this.handleSelectComponent(component)} key={component.key}>
+                                    //     <div className="box">
+                                    //         x: {component.xposition}, y: {component.yposition}
+                                    //     </div>
+                                    //     <ResizableBox width={200} height={200} axis="both">
+                                    //         <div className="box">
+                                    //             x: {component.xposition}, y: {component.yposition}
+                                    //         </div>
+                                    //     </ResizableBox>
+                                    // </Draggable>
+                                    <Rnd
+                                        style={style}
+                                        size={{ width: 200, height: 200 }}
+                                        position={{ x: component.xposition, y: component.yposition}}
+                                        onDragStart={() => this.handleSelectComponent(component)}
+                                        onDrag = {this.handleDrag}
+                                        // onResizeStop={(e, direction, ref, delta, position) => {
+                                        // this.setState({
+                                        //     width: ref.style.width,
+                                        //     height: ref.style.height,
+                                        //     ...position
+                                        // });
+                                        // }}
+                                    >
+                                        x: {component.xposition}, y: {component.yposition}
+                                    </Rnd>
                                     )
                                 })
                             }

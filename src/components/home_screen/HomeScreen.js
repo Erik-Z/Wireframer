@@ -36,8 +36,8 @@ class HomeScreen extends Component {
 
                         <div className="col s8">
                             <div className="banner">
-                                @Wireframer<br />
-                        </div>
+                            Wireframer<br />
+                            </div>
 
                             <div style={{ paddingTop: '15px' }} className="home_new_list_container center-align">
                                 <a onClick={this.handleNewWireframe} className="waves-effect waves-light btn-large red accent-2 hoverable rounded">

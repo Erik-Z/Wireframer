@@ -73,6 +73,30 @@ class WireframeScreen extends Component {
         this.setState({components: list})
     }
 
+    handleAddLabel = () => {
+        var nextitemkey
+        if (this.state.components.length == 0){
+            nextitemkey = 0
+        } else {
+            nextitemkey = Math.max.apply(Math, this.state.components.map(function(o) { return o.key; })) + 1
+        }
+        let labelItem = {
+            name: 'label',
+            text: 'label text',
+            fontSize: 14,
+            fontColor: '#ffffff',
+            height: 50,
+            width: 100,
+            xposition: 0,
+            yposition: 0,
+            key: nextitemkey
+        }
+        this.handleSelectComponent(labelItem)
+        let list = this.state.components
+        list.push(labelItem)
+        this.setState({components: list})
+    }
+
     handleResize = (e, direction, ref, delta, position) => {
         this.setState({
             selectedComponent: {
@@ -175,7 +199,9 @@ class WireframeScreen extends Component {
                         <div className="grey">
                             <h6 style={{textAlign: "center"}}>Add Controller</h6>
                             <div className="box" style={{height: '75px', marginLeft: '65px',}} onClick={this.handleAddContainer}></div>
-                            <p style={{textAlign: "center"}}>container</p>
+                            <p style={{textAlign: "center", fontWeight: "bold"}}>Container</p>
+                            <p style={{textAlign: "center"}}>Prompt for input: </p>
+                            <p style={{textAlign: "center", fontWeight: "bold"}}>Label</p>
                         </div>
                     </div>
                     <div className="box col s6" onClick={this.handleUnselectComponent}
@@ -183,32 +209,36 @@ class WireframeScreen extends Component {
                         <div style={{height: '1000px', width: '1000px', padding: '10px'}}>
                             {
                                 this.state.components.map(component => {
-                                    var background = component.background
-                                    var borderColor = component.borderColor
-                                    var borderRadius = parseInt(component.borderRadius)
-                                    var borderThickness = parseInt(component.borderThickness)
-                                    const style = {
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                        border: "solid",
-                                        borderColor: borderColor,
-                                        borderRadius: borderRadius,
-                                        borderWidth: borderThickness,
-                                        background: background
-                                    };
-                                    return (
-                                    <Rnd
-                                        key={component.key}
-                                        style={style}
-                                        size={{ width: component.width, height: component.height }}
-                                        position={{ x: component.xposition, y: component.yposition}}
-                                        onDragStart={() => this.handleSelectComponent(component)}
-                                        onDrag = {this.handleDrag}
-                                        onResizeStart = {() => this.handleSelectComponent(component)}
-                                        onResizeStop={this.handleResize}>
-                                    </Rnd>
-                                    )
+                                    if(component.name == 'container') {
+                                        var background = component.background
+                                        var borderColor = component.borderColor
+                                        var borderRadius = parseInt(component.borderRadius)
+                                        var borderThickness = parseInt(component.borderThickness)
+                                        const style = {
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            border: "solid",
+                                            borderColor: borderColor,
+                                            borderRadius: borderRadius,
+                                            borderWidth: borderThickness,
+                                            background: background
+                                        };
+                                        return (
+                                        <Rnd
+                                            key={component.key}
+                                            style={style}
+                                            size={{ width: component.width, height: component.height }}
+                                            position={{ x: component.xposition, y: component.yposition}}
+                                            onDragStart={() => this.handleSelectComponent(component)}
+                                            onDrag = {this.handleDrag}
+                                            onResizeStart = {() => this.handleSelectComponent(component)}
+                                            onResizeStop={this.handleResize}>
+                                        </Rnd>
+                                        )
+                                    } else if (component.name == 'label') {
+
+                                    }
                                 })
                             }
                         </div>

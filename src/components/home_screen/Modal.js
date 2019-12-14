@@ -38,13 +38,13 @@ class Modal extends Component {
   render() {
     return (
       <div>
-        <a
+        <span
           className="waves-effect waves-light modal-trigger"
           data-target="modal1"
           id="list_trash"
         >
           &#128465;
-        </a>
+        </span>
 
         <div
           ref={Modal => {

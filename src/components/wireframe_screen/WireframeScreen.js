@@ -27,7 +27,6 @@ class WireframeScreen extends Component {
 
     handleChange = (e) => {
         const { target } = e;
-
         this.setState(state => ({
             ...state,
             [target.id]: target.value,
@@ -62,6 +61,7 @@ class WireframeScreen extends Component {
             width: 200,
             xposition: 0,
             yposition: 0,
+            background: '#ffffff',
             key: nextitemkey
         }
         this.handleSelectComponent(containerItem)
@@ -129,6 +129,16 @@ class WireframeScreen extends Component {
         }
     }
 
+    handleComponentChange = (e) => {
+        const { target } = e;
+        this.setState({
+            selectedComponent: {
+                ...this.state.selectedComponent,
+                [target.id]: target.value,
+            }
+        }, this.handleMoveSelectedToComponents);
+    }
+
     componentDidMount(){
         document.addEventListener('keydown',this.deleteComponent);
     }
@@ -170,12 +180,13 @@ class WireframeScreen extends Component {
                         <div style={{height: '1000px', width: '1000px', padding: '10px'}}>
                             {
                                 this.state.components.map(component => {
+                                    var background = component.background
                                     const style = {
                                         display: "flex",
                                         alignItems: "center",
                                         justifyContent: "center",
                                         border: "solid 1px #ddd",
-                                        background: "#f0f0f0"
+                                        background: background
                                     };
                                     return (
                                     <Rnd
@@ -185,17 +196,25 @@ class WireframeScreen extends Component {
                                         onDragStart={() => this.handleSelectComponent(component)}
                                         onDrag = {this.handleDrag}
                                         onResizeStart = {() => this.handleSelectComponent(component)}
-                                        onResizeStop={this.handleResize}
-                                    >
-                                        x: {component.xposition}, y: {component.yposition}
+                                        onResizeStop={this.handleResize}>
                                     </Rnd>
                                     )
                                 })
                             }
                         </div>
                     </div>
-                    <div className="grey col s3">
+                    <div className="white col s3">
                         <h6>Properties</h6>
+                        
+                        {this.state.selectedComponent ? (
+                            <div>
+                                <label className="active text_16" htmlFor="name">Background: </label>
+                                <input className="text_20" type="color" name="background" id="background" onChange={this.handleComponentChange} value={this.state.selectedComponent.background} />
+                            </div>
+                        ) 
+                        : (<div></div>)
+                        }
+                        
                     </div>               
                 </div>
         )

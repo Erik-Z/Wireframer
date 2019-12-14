@@ -62,6 +62,9 @@ class WireframeScreen extends Component {
             xposition: 0,
             yposition: 0,
             background: '#ffffff',
+            borderColor: '#000000',
+            borderThickness: 1,
+            borderRadius: 0,
             key: nextitemkey
         }
         this.handleSelectComponent(containerItem)
@@ -181,15 +184,22 @@ class WireframeScreen extends Component {
                             {
                                 this.state.components.map(component => {
                                     var background = component.background
+                                    var borderColor = component.borderColor
+                                    var borderRadius = parseInt(component.borderRadius)
+                                    var borderThickness = parseInt(component.borderThickness)
                                     const style = {
                                         display: "flex",
                                         alignItems: "center",
                                         justifyContent: "center",
-                                        border: "solid 1px #ddd",
+                                        border: "solid",
+                                        borderColor: borderColor,
+                                        borderRadius: borderRadius,
+                                        borderWidth: borderThickness,
                                         background: background
                                     };
                                     return (
                                     <Rnd
+                                        key={component.key}
                                         style={style}
                                         size={{ width: component.width, height: component.height }}
                                         position={{ x: component.xposition, y: component.yposition}}
@@ -206,12 +216,22 @@ class WireframeScreen extends Component {
                     <div className="white col s3">
                         <h6>Properties</h6>
                         
-                        {this.state.selectedComponent ? (
+                        {this.state.selectedComponent ? this.state.selectedComponent.name == 'container' ? (
                             <div>
                                 <label className="active text_16" htmlFor="name">Background: </label>
                                 <input className="text_20" type="color" name="background" id="background" onChange={this.handleComponentChange} value={this.state.selectedComponent.background} />
+                                <div></div>
+                                <label className="active text_16" htmlFor="name">Border Color: </label>
+                                <input className="text_20" type="color" name="borderColor" id="borderColor" onChange={this.handleComponentChange} value={this.state.selectedComponent.borderColor} />
+                                <div></div>
+                                <label className="active text_16" htmlFor="name">Border Thickness: </label>
+                                <input className="text_20" type="number" min='0' name="borderThickness" id="borderThickness" onChange={this.handleComponentChange} value={this.state.selectedComponent.borderThickness} />
+                                <div></div>
+                                <label className="active text_16" htmlFor="name">Border Radius: </label>
+                                <input className="text_20" type="number" min='0' name="borderRadius" id="borderRadius" onChange={this.handleComponentChange} value={this.state.selectedComponent.borderRadius} />
                             </div>
                         ) 
+                        : (<div></div>)
                         : (<div></div>)
                         }
                         

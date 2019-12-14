@@ -12,9 +12,8 @@ class WireframeScreen extends Component {
         name: this.props.wireframe.name,
         components: this.props.wireframe.components,
         selectedComponent: null,
-        deltaPosition: {
-            x: 0, y: 100
-        }
+        isCurrentlyDragging: false,
+
     }
 
     handleDrag = (e, ui) => {
@@ -103,7 +102,19 @@ class WireframeScreen extends Component {
     } 
 
     handleSelectComponent = (component) => {
-        this.setState({selectedComponent: component})
+        this.setState({selectedComponent: component, isCurrentlyDragging: true})
+    }
+
+    notCurrentlyDragging = () => {
+        if(this.state.isCurrentlyDragging){
+            this.setState({isCurrentlyDragging: false})
+        }
+    }
+
+    handleUnselectComponent = () =>{
+        if(!this.state.isCurrentlyDragging){
+            this.setState({selectedComponent: null})
+        }
     }
 
     render() {
@@ -119,7 +130,7 @@ class WireframeScreen extends Component {
         }
 
         return (
-                <div className="row">
+                <div className="row" onClick={this.notCurrentlyDragging}>
                     <div className="input-field col s3">
                         <label className="active text_16" htmlFor="name">Wireframe Name</label>
                         <input className="text_20" type="text" name="name" id="name" onChange={this.handleChange} defaultValue={wireframe.name} />
@@ -135,7 +146,8 @@ class WireframeScreen extends Component {
                             <p style={{textAlign: "center"}}>container</p>
                         </div>
                     </div>
-                    <div className="box col s6" style={{height: '600px', width: '600px', backgroundColor: "white", position: 'relative', overflow: 'auto', padding: '0'}}>
+                    <div className="box col s6" onClick={this.handleUnselectComponent}
+                    style={{height: '600px', width: '600px', backgroundColor: "white", position: 'relative', overflow: 'auto', padding: '0'}}>
                         <div style={{height: '1000px', width: '1000px', padding: '10px'}}>
                             {
                                 this.state.components.map(component => {
@@ -155,8 +167,6 @@ class WireframeScreen extends Component {
                         <h6>Properties</h6>
                     </div>               
                 </div>
-                
-            
         )
     }
 }

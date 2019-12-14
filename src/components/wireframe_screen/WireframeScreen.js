@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { firestoreConnect } from 'react-redux-firebase';
 import { getFirestore } from 'redux-firestore';
-import Draggable from 'react-draggable'
 import { Rnd } from "react-rnd";
 
 class WireframeScreen extends Component {
@@ -50,7 +49,7 @@ class WireframeScreen extends Component {
 
     handleAddContainer = () => {
         var nextitemkey
-        if (this.state.components.length == 0){
+        if (this.state.components.length === 0){
             nextitemkey = 0
         } else {
             nextitemkey = Math.max.apply(Math, this.state.components.map(function(o) { return o.key; })) + 1
@@ -75,7 +74,7 @@ class WireframeScreen extends Component {
 
     handleAddLabel = () => {
         var nextitemkey
-        if (this.state.components.length == 0){
+        if (this.state.components.length === 0){
             nextitemkey = 0
         } else {
             nextitemkey = Math.max.apply(Math, this.state.components.map(function(o) { return o.key; })) + 1
@@ -94,6 +93,34 @@ class WireframeScreen extends Component {
         this.handleSelectComponent(labelItem)
         let list = this.state.components
         list.push(labelItem)
+        this.setState({components: list})
+    }
+
+    handleAddButton = () => {
+        var nextitemkey
+        if (this.state.components.length === 0){
+            nextitemkey = 0
+        } else {
+            nextitemkey = Math.max.apply(Math, this.state.components.map(function(o) { return o.key; })) + 1
+        }
+        let buttonItem = {
+            name: 'button',
+            text: 'submit',
+            fontSize: 14,
+            fontColor: '#ffffff',
+            background: '#d3d3d3',
+            borderColor: '#000000',
+            borderThickness: 1,
+            borderRadius: 0,
+            height: 40,
+            width: 100,
+            xposition: 0,
+            yposition: 0,
+            key: nextitemkey
+        }
+        this.handleSelectComponent(buttonItem)
+        let list = this.state.components
+        list.push(buttonItem)
         this.setState({components: list})
     }
 
@@ -200,8 +227,11 @@ class WireframeScreen extends Component {
                             <h6 style={{textAlign: "center"}}>Add Controller</h6>
                             <div className="box" style={{height: '75px', marginLeft: '65px',}} onClick={this.handleAddContainer}></div>
                             <p style={{textAlign: "center", fontWeight: "bold"}}>Container</p>
-                            <p style={{textAlign: "center"}} onClick={this.handleAddLabel}>Prompt for input: </p>
+                            <p style={{textAlign: "center", cursor: 'pointer'}} onClick={this.handleAddLabel}>Prompt for input: </p>
                             <p style={{textAlign: "center", fontWeight: "bold"}}>Label</p>
+                            <div className="box" onClick={this.handleAddButton}
+                            style={{cursor: 'pointer', height: '40px', width: '100px', marginLeft: '100px', background: '#d3d3d3', textAlign: 'center'}}>Submit</div>
+                            <p style={{textAlign: "center", fontWeight: "bold"}}>Button</p>
                         </div>
                     </div>
                     <div className="box col s6" onClick={this.handleUnselectComponent}
@@ -209,7 +239,7 @@ class WireframeScreen extends Component {
                         <div style={{height: '1000px', width: '1000px', padding: '10px'}}>
                             {
                                 this.state.components.map(component => {
-                                    if(component.name == 'container') {
+                                    if(component.name === 'container') {
                                         var background = component.background
                                         var borderColor = component.borderColor
                                         var borderRadius = parseInt(component.borderRadius)
@@ -272,6 +302,41 @@ class WireframeScreen extends Component {
                                             </Rnd>
                                         )
                                     }
+                                    else if(component.name === 'button') {
+                                        var background = component.background
+                                        var borderColor = component.borderColor
+                                        var borderRadius = parseInt(component.borderRadius)
+                                        var borderThickness = parseInt(component.borderThickness)
+                                        var fontColor =  component.fontColor
+                                        var fontSize = parseInt(component.fontSize)
+                                        var style = {
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            color: fontColor,
+                                            fontSize: fontSize,
+                                            border: "solid",
+                                            borderColor: borderColor,
+                                            borderRadius: borderRadius,
+                                            borderWidth: borderThickness,
+                                            background: background
+                                        };
+                                        return (
+                                            <Rnd
+                                                key={component.key}
+                                                style={style}
+                                                size={{ width: component.width, height: component.height }}
+                                                position={{ x: component.xposition, y: component.yposition}}
+                                                onDragStart={() => this.handleSelectComponent(component)}
+                                                onDrag = {this.handleDrag}
+                                                onResizeStart = {() => this.handleSelectComponent(component)}
+                                                onResizeStop={this.handleResize}>
+                                                    {component.text}
+                                            </Rnd>
+                                        )
+                                    } else {
+                                        
+                                    }
                                 })
                             }
                         </div>
@@ -306,6 +371,30 @@ class WireframeScreen extends Component {
                                 <input className="text_20" type="color" name="fontColor" id="fontColor" onChange={this.handleComponentChange} value={this.state.selectedComponent.fontColor} />
                             </div>
                         )
+                        : this.state.selectedComponent.name == 'button' ? (
+                            <div>
+                                <label className="active text_16" htmlFor="name">Text: </label>
+                                <input className="text_20" type="text" name="text" id="text" onChange={this.handleComponentChange} value={this.state.selectedComponent.text} />
+                                <div></div>
+                                <label className="active text_16" htmlFor="name">Font Size: </label>
+                                <input className="text_20" type="number" min='1' name="fontSize" id="fontSize" onChange={this.handleComponentChange} value={this.state.selectedComponent.fontSize} />
+                                <div></div>
+                                <label className="active text_16" htmlFor="name">Font Color: </label>
+                                <input className="text_20" type="color" name="fontColor" id="fontColor" onChange={this.handleComponentChange} value={this.state.selectedComponent.fontColor} />
+                                <div></div>
+                                <label className="active text_16" htmlFor="name">Background: </label>
+                                <input className="text_20" type="color" name="background" id="background" onChange={this.handleComponentChange} value={this.state.selectedComponent.background} />
+                                <div></div>
+                                <label className="active text_16" htmlFor="name">Border Color: </label>
+                                <input className="text_20" type="color" name="borderColor" id="borderColor" onChange={this.handleComponentChange} value={this.state.selectedComponent.borderColor} />
+                                <div></div>
+                                <label className="active text_16" htmlFor="name">Border Thickness: </label>
+                                <input className="text_20" type="number" min='0' name="borderThickness" id="borderThickness" onChange={this.handleComponentChange} value={this.state.selectedComponent.borderThickness} />
+                                <div></div>
+                                <label className="active text_16" htmlFor="name">Border Radius: </label>
+                                <input className="text_20" type="number" min='0' name="borderRadius" id="borderRadius" onChange={this.handleComponentChange} value={this.state.selectedComponent.borderRadius} />
+                            </div>
+                        ) 
                         : (<div></div>)
                         : (<div></div>)
                         }

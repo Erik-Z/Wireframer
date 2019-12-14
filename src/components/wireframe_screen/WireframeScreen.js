@@ -11,6 +11,7 @@ class WireframeScreen extends Component {
     state = {
         name: this.props.wireframe.name,
         components: this.props.wireframe.components,
+        selectedComponent: null,
         deltaPosition: {
             x: 0, y: 100
         }
@@ -67,8 +68,6 @@ class WireframeScreen extends Component {
         } else {
             nextitemkey = Math.max.apply(Math, this.state.components.map(function(o) { return o.key; })) + 1
         }
-
-        
         let containerItem = {
             name: 'container',
             height: 20,
@@ -77,25 +76,34 @@ class WireframeScreen extends Component {
             yposition: 0,
             key: nextitemkey
         }
+        this.handleSelectComponent(containerItem)
         let list = this.state.components
         list.push(containerItem)
         this.setState({components: list})
     }
 
-    handleDrag2 = (e, ui, key) => {
-        console.log(ui)
-        // let currentComponent = this.state.components.filter(obj => {
-        //     return obj.key == key
-        // });
-        // currentComponent.xposition = currentComponent.xposition + ui.deltaX
-        // currentComponent.yposition = currentComponent.yposition + ui.deltaY
-        // let components = this.state.components
-        // let index = components.indexOf(currentComponent)
-        // components[index] = currentComponent
-        // this.setState(
-        // {
-        //     components: components
-        // });
+    handleDrag2 = (e, ui) => {
+        const x = this.state.selectedComponent.xposition
+        const y = this.state.selectedComponent.yposition
+        this.setState(
+            {
+                selectedComponent: {
+                ...this.state.selectedComponent,
+                xposition: x + ui.deltaX,
+                yposition: y + ui.deltaY,}
+            }, this.handleMoveSelectedToComponents
+        )
+    }
+
+    handleMoveSelectedToComponents = () => {
+        let list = this.state.components
+        let index = list.map(o => {return o.key}).indexOf(this.state.selectedComponent.key)
+        list[index] = this.state.selectedComponent
+        this.setState({components: list})
+    } 
+
+    handleSelectComponent = (component) => {
+        this.setState({selectedComponent: component})
     }
 
     render() {
@@ -137,7 +145,8 @@ class WireframeScreen extends Component {
                             {
                                 this.state.components.map(component => {
                                     return (
-                                    <Draggable bounds="parent" defaultPosition={{x: component.xposition, y: component.yposition}} onDrag={this.handleDrag2.bind(this, component.key)}>
+                                    <Draggable bounds="parent" defaultPosition={{x: component.xposition, y: component.yposition}} 
+                                    onDrag={this.handleDrag2} onStart={() => this.handleSelectComponent(component)} key={component.key}>
                                         <div className="box">
                                             x: {component.xposition}, y: {component.yposition}
                                         </div>

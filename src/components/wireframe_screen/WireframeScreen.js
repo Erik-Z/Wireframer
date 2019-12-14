@@ -7,29 +7,13 @@ import { getFirestore } from 'redux-firestore';
 import Draggable from 'react-draggable'
 import { Rnd } from "react-rnd";
 
-const style = {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    border: "solid 1px #ddd",
-    background: "#f0f0f0"
-};
-
 class WireframeScreen extends Component {
     state = {
         name: this.props.wireframe.name,
         components: this.props.wireframe.components,
         selectedComponent: null,
         isCurrentlyDragging: false,
-        width: 200,
-        height: 200,
-        x: 10,
-        y: 10
     }
-
-    
-
-    
 
     changedTime = false;
 
@@ -74,8 +58,8 @@ class WireframeScreen extends Component {
         }
         let containerItem = {
             name: 'container',
-            height: 20,
-            width: 20,
+            height: 200,
+            width: 200,
             xposition: 0,
             yposition: 0,
             key: nextitemkey
@@ -87,11 +71,20 @@ class WireframeScreen extends Component {
     }
 
     handleResize = (e, direction, ref, delta, position) => {
+        // this.setState({
+        //     width: ref.style.width,
+        //     height: ref.style.height,
+        //     ...position
+        // });
         this.setState({
-            width: ref.style.width,
+            selectedComponent: {
+            ...this.state.selectedComponent,
+            xposition: position.x,
+            yposition: position.y,
             height: ref.style.height,
-            ...position
-        });
+            width: ref.style.width,
+            }
+        }, this.handleMoveSelectedToComponents)
     }
 
     handleDrag = (e, ui) => {
@@ -185,17 +178,12 @@ class WireframeScreen extends Component {
                                     // </Draggable>
                                     <Rnd
                                         style={style}
-                                        size={{ width: 200, height: 200 }}
+                                        size={{ width: component.width, height: component.height }}
                                         position={{ x: component.xposition, y: component.yposition}}
                                         onDragStart={() => this.handleSelectComponent(component)}
                                         onDrag = {this.handleDrag}
-                                        // onResizeStop={(e, direction, ref, delta, position) => {
-                                        // this.setState({
-                                        //     width: ref.style.width,
-                                        //     height: ref.style.height,
-                                        //     ...position
-                                        // });
-                                        // }}
+                                        onResizeStart = {() => this.handleSelectComponent(component)}
+                                        onResizeStop={this.handleResize}
                                     >
                                         x: {component.xposition}, y: {component.yposition}
                                     </Rnd>

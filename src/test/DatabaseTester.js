@@ -1,8 +1,8 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import { connect } from 'react-redux';
-import todoJson from './TestTodoListData.json'
 import { getFirestore } from 'redux-firestore';
 import wireframeData from './WireframerData.json'
+import { Redirect } from 'react-router-dom';
 
 class DatabaseTester extends React.Component {
 
@@ -36,13 +36,14 @@ class DatabaseTester extends React.Component {
             });
         })
     }
-
     render() {
-        return (
+        return(
             <div>
                 <button onClick={this.handleClear}>Clear Database</button>
                 <button onClick={this.handleReset}>Reset Database</button>
-            </div>)
+                <button onClick={this.test}>Test</button>
+            </div>
+        )
     }
 }
 

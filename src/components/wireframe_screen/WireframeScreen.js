@@ -14,14 +14,15 @@ class WireframeScreen extends Component {
         isCurrentlyDragging: false,
         height: this.props.wireframe.height,
         width: this.props.wireframe.width,
-        proposedHeight: "600",
-        proposedWidth: "600"
+        proposedHeight: this.props.wireframe.height,
+        proposedWidth: this.props.wireframe.width,
+        recentlySaved: false
     }
 
     changedTime = false;
 
     handleChangeDiagramDimensions = () => {
-        this.setState({height: parseInt(this.state.proposedHeight), width: parseInt(this.state.proposedWidth)})
+        this.setState({height: parseInt(this.state.proposedHeight), width: parseInt(this.state.proposedWidth), recentlySaved: false})
     }
 
     updateTime = () => {
@@ -37,6 +38,7 @@ class WireframeScreen extends Component {
         this.setState(state => ({
             ...state,
             [target.id]: target.value,
+            recentlySaved: false
         }));
     }
 
@@ -54,7 +56,7 @@ class WireframeScreen extends Component {
                 width: this.state.width,
                 components: this.state.components
             }
-        ).then(() => {this.props.history.push({pathname: '/'})})
+        ).then(() => {this.setState({recentlySaved: true})})
     }
 
     handleAddContainer = () => {
@@ -79,7 +81,7 @@ class WireframeScreen extends Component {
         this.handleSelectComponent(containerItem)
         let list = this.state.components
         list.push(containerItem)
-        this.setState({components: list})
+        this.setState({components: list, recentlySaved: false})
     }
 
     handleAddLabel = () => {
@@ -103,7 +105,7 @@ class WireframeScreen extends Component {
         this.handleSelectComponent(labelItem)
         let list = this.state.components
         list.push(labelItem)
-        this.setState({components: list})
+        this.setState({components: list, recentlySaved: false})
     }
 
     handleAddButton = () => {
@@ -131,7 +133,7 @@ class WireframeScreen extends Component {
         this.handleSelectComponent(buttonItem)
         let list = this.state.components
         list.push(buttonItem)
-        this.setState({components: list})
+        this.setState({components: list, recentlySaved: false})
     }
 
     handleAddTextfield = () => {
@@ -159,7 +161,7 @@ class WireframeScreen extends Component {
         this.handleSelectComponent(buttonItem)
         let list = this.state.components
         list.push(buttonItem)
-        this.setState({components: list})
+        this.setState({components: list, recentlySaved: false})
     }
 
     handleResize = (e, direction, ref, delta, position) => {
@@ -170,7 +172,8 @@ class WireframeScreen extends Component {
             yposition: position.y,
             height: ref.style.height,
             width: ref.style.width,
-            }
+            },
+            recentlySaved: false
         }, this.handleMoveSelectedToComponents)
     }
 
@@ -182,7 +185,8 @@ class WireframeScreen extends Component {
                 selectedComponent: {
                 ...this.state.selectedComponent,
                 xposition: x + ui.deltaX,
-                yposition: y + ui.deltaY,}
+                yposition: y + ui.deltaY,},
+                recentlySaved: false
             }, this.handleMoveSelectedToComponents
         )
     }
@@ -216,7 +220,23 @@ class WireframeScreen extends Component {
                 let list = this.state.components
                 let index = list.map(o => {return o.key}).indexOf(this.state.selectedComponent.key)
                 list.splice(index, 1)
-                this.setState({components: list, selectedComponent: null})
+                this.setState({components: list, selectedComponent: null, recentlySaved: false})
+            }
+        }
+    }
+
+    duplicateComponent = (e) => {
+        e.preventDefault()
+        if (e.keyCode == 68 && e.ctrlKey){
+            if(this.state.selectedComponent){
+                let list = this.state.components
+                var nextitemkey = Math.max.apply(Math, this.state.components.map(function(o) { return o.key; })) + 1
+                let duplicateComponent = {
+                    ...this.state.selectedComponent,
+                    key: nextitemkey
+                }
+                list.push(duplicateComponent)
+                this.setState({components: list, selectedComponent: duplicateComponent, recentlySaved: false})
             }
         }
     }
@@ -227,16 +247,19 @@ class WireframeScreen extends Component {
             selectedComponent: {
                 ...this.state.selectedComponent,
                 [target.id]: target.value,
-            }
+            },
+            recentlySaved: false
         }, this.handleMoveSelectedToComponents);
     }
 
     componentDidMount(){
         document.addEventListener('keydown',this.deleteComponent);
+        document.addEventListener('keydown',this.duplicateComponent);
     }
 
     componentWillUnmount() {
         document.removeEventListener('keydown', this.deleteComponent);
+        document.removeEventListener('keydown',this.duplicateComponent);
     }
     render() {
         const auth = this.props.auth;
@@ -280,6 +303,9 @@ class WireframeScreen extends Component {
                             style={{cursor: 'pointer', height: '40px', width: '200px', marginLeft: '50px', color: '#d3d3d3'}}>input</div>
                             <p style={{textAlign: "center", fontWeight: "bold"}}>Textfield</p>
                         </div>
+                        {
+                            this.state.recentlySaved ? <p>Saved!</p> : <p></p>
+                        }
                     </div>
                     <div className="box col s6" onClick={this.handleUnselectComponent}
                     style={{height: height, width: width, backgroundColor: "white", position: 'relative', overflow: 'auto', padding: '0'}}>

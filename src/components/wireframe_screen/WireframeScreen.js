@@ -5,6 +5,7 @@ import { compose } from 'redux';
 import { firestoreConnect } from 'react-redux-firebase';
 import { getFirestore } from 'redux-firestore';
 import { Rnd } from "react-rnd";
+import SaveModal from './SaveModal'
 
 class WireframeScreen extends Component {
     state = {
@@ -226,9 +227,9 @@ class WireframeScreen extends Component {
     }
 
     duplicateComponent = (e) => {
-        e.preventDefault()
         if (e.keyCode == 68 && e.ctrlKey){
             if(this.state.selectedComponent){
+                e.preventDefault()
                 let list = this.state.components
                 var nextitemkey = Math.max.apply(Math, this.state.components.map(function(o) { return o.key; })) + 1
                 let duplicateComponent = {
@@ -280,15 +281,19 @@ class WireframeScreen extends Component {
                         <label className="active text_16" htmlFor="name">Wireframe Name</label>
                         <input className="text_20" type="text" name="name" id="name" onChange={this.handleChange} defaultValue={wireframe.name} />
                         <div>Height</div>
-                        <input className="text_20" type="text" name="proposedHeight" id="proposedHeight" onChange={this.handleChange} defaultValue={this.state.proposedHeight} />
+                        <input className="text_20" type="number" min="100" name="proposedHeight" id="proposedHeight" onChange={this.handleChange} defaultValue={this.state.proposedHeight} />
                         <div>Width</div>
-                        <input className="text_20" type="text" name="proposedWidth" id="proposedWidth" onChange={this.handleChange} defaultValue={this.state.proposedWidth} />
+                        <input className="text_20" type="number" min="100" name="proposedWidth" id="proposedWidth" onChange={this.handleChange} defaultValue={this.state.proposedWidth} />
                         <button onClick={this.handleChangeDiagramDimensions}> Update Diagram </button>
                         <div>
                             <i className="material-icons">zoom_in</i>
                             <i className="material-icons" style = {{marginLeft: '20px'}}>zoom_out</i>
                             <span style = {{marginLeft: '20px', cursor: "pointer"}} onClick={this.handleSave}>Save</span>
-                            <span style = {{marginLeft: '20px', cursor: "pointer"}} onClick={this.handleClose}>Close</span>
+                            {
+                                this.state.recentlySaved ? <span style = {{marginLeft: '20px', cursor: "pointer"}} onClick={this.handleClose}>Close</span> 
+                                : <SaveModal name={this.state.name} components={this.state.components} height={this.state.height} width={this.state.width}
+                                    id={this.props.wireframe.id} close={this.handleClose}/>
+                            }
                         </div>
                         <div className="grey">
                             <h6 style={{textAlign: "center"}}>Add Controller</h6>
@@ -304,7 +309,7 @@ class WireframeScreen extends Component {
                             <p style={{textAlign: "center", fontWeight: "bold"}}>Textfield</p>
                         </div>
                         {
-                            this.state.recentlySaved ? <p>Saved!</p> : <p></p>
+                            this.state.recentlySaved ? <p style={{textAlign: "center", fontWeight: "bold", color: "#39ff14"}}>Saved!</p> : <p></p>
                         }
                     </div>
                     <div className="box col s6" onClick={this.handleUnselectComponent}

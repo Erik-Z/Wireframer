@@ -10,11 +10,15 @@ class WireframeLinks extends React.Component {
         console.log(wireframes);
         return (
             <div className="wireframes section">
-                {wireframes && wireframes.map(wireframe => (
-                    <Link to={'/wireframe/' + wireframe.id} key={wireframe.id}>
-                        <WireframeCard wireframe={wireframe}/>
-                    </Link>
-                ))}
+                {wireframes && wireframes.map(wireframe => {
+                    if(this.props.auth.uid === wireframe.owner){
+                        return(
+                            <Link to={'/wireframe/' + wireframe.id} key={wireframe.id}>
+                                <WireframeCard wireframe={wireframe}/>
+                            </Link>
+                        )
+                    }
+                })}
                 
             </div>
         );

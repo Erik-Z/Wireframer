@@ -29,7 +29,7 @@ class HomeScreen extends Component {
         return (
             <div className="z-depth-2" style={{
                 backgroundColor: "#55435f", paddingBottom: '70px', borderRadius: '0 0 10px 10px',
-                backgroundImage: 'linear-gradient(to bottom, #7F5A95, #473850)'
+                backgroundImage: 'linear-gradient(to bottom, #bdc3c7, #2c3e50)'
             }}>
                 <div className="dashboard container">
                     <div className="row">

@@ -13,7 +13,8 @@ class HomeScreen extends Component {
             components: [],
             time: Date.now(),
             height: 600,
-            width: 600
+            width: 600,
+            zoom: 0
         }
         const fireStore = getFirestore();
         let newWireframe = fireStore.collection("wireframes").doc();

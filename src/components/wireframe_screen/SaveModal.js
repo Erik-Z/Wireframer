@@ -21,12 +21,6 @@ class SaveModal extends Component {
     // instance.close();
     // instance.destroy();
   }
-
-
-//   closeModal = (e) => {
-//     e.stopPropagation()
-//     console.log(this.props.id)
-//   }
   saveWork = () => {
     const fireStore = getFirestore()
     let dbitem = fireStore.collection('wireframes').doc(this.props.id)
@@ -35,7 +29,8 @@ class SaveModal extends Component {
         name: this.props.name,
         height: this.props.height,
         width: this.props.width,
-        components: this.props.components
+        components: this.props.components,
+        zoom: this.props.zoom
       }
     ).then(this.props.close)
   }

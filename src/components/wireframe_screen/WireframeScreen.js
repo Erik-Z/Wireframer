@@ -17,7 +17,8 @@ class WireframeScreen extends Component {
         width: this.props.wireframe.width,
         proposedHeight: this.props.wireframe.height,
         proposedWidth: this.props.wireframe.width,
-        recentlySaved: false
+        recentlySaved: true,
+        zoom: this.props.wireframe.zoom
     }
 
     changedTime = false;
@@ -55,7 +56,8 @@ class WireframeScreen extends Component {
                 name: this.state.name,
                 height: this.state.height,
                 width: this.state.width,
-                components: this.state.components
+                components: this.state.components,
+                zoom: this.state.zoom
             }
         ).then(() => {this.setState({recentlySaved: true})})
     }
@@ -69,8 +71,8 @@ class WireframeScreen extends Component {
         }
         let containerItem = {
             name: 'container',
-            height: 200,
-            width: 200,
+            height: "200px",
+            width: "200px",
             xposition: 0,
             yposition: 0,
             background: '#ffffff',
@@ -85,6 +87,46 @@ class WireframeScreen extends Component {
         this.setState({components: list, recentlySaved: false})
     }
 
+    handleZoomIn = () => {
+        if (this.state.zoom < 3){
+            let list = this.state.components
+            var newlist = list.map((element) => {
+                var newwidth = element.width.substring(0, element.width.length - 2);
+                newwidth = parseFloat(newwidth) * 2
+                element.width = newwidth + 'px'
+                var newheight = element.height.substring(0, element.height.length - 2);
+                newheight = parseFloat(newheight) * 2
+                element.height = newheight + 'px'
+                element.fontSize = element.fontSize * 2
+                element.borderThickness = element.borderThickness * 2
+                element.xposition = element.xposition * 2
+                element.yposition = element.yposition * 2
+                return element
+            })
+            this.setState({components: newlist, recentlySaved: false, zoom: this.state.zoom + 1})
+        }
+    }
+
+    handleZoomOut = () =>{
+        if (this.state.zoom > -3){
+            let list = this.state.components
+            var newlist = list.map((element) => {
+                var newwidth = element.width.substring(0, element.width.length - 2);
+                newwidth = parseFloat(newwidth) / 2
+                element.width = newwidth + 'px'
+                var newheight = element.height.substring(0, element.height.length - 2);
+                newheight = parseFloat(newheight) / 2
+                element.height = newheight + 'px'
+                element.fontSize = element.fontSize / 2
+                element.borderThickness = element.borderThickness / 2
+                element.xposition = element.xposition / 2
+                element.yposition = element.yposition / 2
+                return element
+            })
+            this.setState({components: newlist, recentlySaved: false, zoom: this.state.zoom - 1})
+        }
+    }
+
     handleAddLabel = () => {
         var nextitemkey
         if (this.state.components.length === 0){
@@ -97,8 +139,8 @@ class WireframeScreen extends Component {
             text: 'label text',
             fontSize: 14,
             fontColor: '#ffffff',
-            height: 50,
-            width: 100,
+            height: "50px",
+            width: "100px",
             xposition: 0,
             yposition: 0,
             key: nextitemkey
@@ -125,8 +167,8 @@ class WireframeScreen extends Component {
             borderColor: '#000000',
             borderThickness: 1,
             borderRadius: 0,
-            height: 40,
-            width: 100,
+            height: "40px",
+            width: "100px",
             xposition: 0,
             yposition: 0,
             key: nextitemkey
@@ -153,8 +195,8 @@ class WireframeScreen extends Component {
             borderColor: '#d3d3d3',
             borderThickness: 1,
             borderRadius: 1,
-            height: 40,
-            width: 200,
+            height: "40px",
+            width: "200px",
             xposition: 0,
             yposition: 0,
             key: nextitemkey
@@ -286,13 +328,13 @@ class WireframeScreen extends Component {
                         <input className="text_20" type="number" min="100" name="proposedWidth" id="proposedWidth" onChange={this.handleChange} defaultValue={this.state.proposedWidth} />
                         <button onClick={this.handleChangeDiagramDimensions}> Update Diagram </button>
                         <div>
-                            <i className="material-icons">zoom_in</i>
-                            <i className="material-icons" style = {{marginLeft: '20px'}}>zoom_out</i>
+                            <i className="material-icons" onClick={this.handleZoomIn} style = {{cursor: 'pointer'}}>zoom_in</i>
+                            <i className="material-icons" style = {{marginLeft: '20px', cursor: 'pointer'}} onClick={this.handleZoomOut}>zoom_out</i>
                             <span style = {{marginLeft: '20px', cursor: "pointer"}} onClick={this.handleSave}>Save</span>
                             {
                                 this.state.recentlySaved ? <span style = {{marginLeft: '20px', cursor: "pointer"}} onClick={this.handleClose}>Close</span> 
                                 : <SaveModal name={this.state.name} components={this.state.components} height={this.state.height} width={this.state.width}
-                                    id={this.props.wireframe.id} close={this.handleClose}/>
+                                    id={this.props.wireframe.id} close={this.handleClose} zoom={this.state.zoom}/>
                             }
                         </div>
                         <div className="grey">
@@ -332,7 +374,7 @@ class WireframeScreen extends Component {
                                                 borderColor: borderColor,
                                                 borderRadius: borderRadius,
                                                 borderWidth: borderThickness,
-                                                background: background
+                                                background: background,
                                             };
                                         } else {
                                             style = {
@@ -343,7 +385,7 @@ class WireframeScreen extends Component {
                                                 borderColor: borderColor,
                                                 borderRadius: borderRadius,
                                                 borderWidth: borderThickness,
-                                                background: background
+                                                background: background,
                                             };
                                         }
                                         
@@ -370,7 +412,7 @@ class WireframeScreen extends Component {
                                                 justifyContent: "center",
                                                 outline: "2px dashed blue",
                                                 color: fontColor,
-                                                fontSize: fontSize
+                                                fontSize: fontSize,
                                             };
                                         } else {
                                             style = {
@@ -378,7 +420,7 @@ class WireframeScreen extends Component {
                                                 alignItems: "center",
                                                 justifyContent: "center",
                                                 color: fontColor,
-                                                fontSize: fontSize
+                                                fontSize: fontSize,
                                             };
                                         }
                                         return (
@@ -415,7 +457,7 @@ class WireframeScreen extends Component {
                                                 borderColor: borderColor,
                                                 borderRadius: borderRadius,
                                                 borderWidth: borderThickness,
-                                                background: background
+                                                background: background,
                                             };
                                         } else {
                                             style = {
@@ -428,7 +470,7 @@ class WireframeScreen extends Component {
                                                 borderColor: borderColor,
                                                 borderRadius: borderRadius,
                                                 borderWidth: borderThickness,
-                                                background: background
+                                                background: background,
                                             };
                                         }
                                         
@@ -464,7 +506,7 @@ class WireframeScreen extends Component {
                                                 borderColor: borderColor,
                                                 borderRadius: borderRadius,
                                                 borderWidth: borderThickness,
-                                                background: background
+                                                background: background,
                                             };
                                         } else {
                                             style = {
@@ -476,7 +518,7 @@ class WireframeScreen extends Component {
                                                 borderColor: borderColor,
                                                 borderRadius: borderRadius,
                                                 borderWidth: borderThickness,
-                                                background: background
+                                                background: background,
                                             };
                                         }
                                         return (

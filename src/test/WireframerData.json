@@ -6,6 +6,7 @@
 		"owner": "siiCeFHmAkeiGqpTVWXzNQPPD4l2",
 		"height" : 600,
 		"width" : 600,
+		"zoom": 0,
 		"components": [
 			{
 				"name": "textfield",
@@ -56,6 +57,7 @@
 		"owner": "siiCeFHmAkeiGqpTVWXzNQPPD4l2",
 		"height" : 600,
 		"width" : 600,
+		"zoom": 0,
 		"components": [
 			{
 				"name": "container",
@@ -77,6 +79,7 @@
 		"owner": "siiCeFHmAkeiGqpTVWXzNQPPD4l2",
 		"height" : 600,
 		"width" : 600,
+		"zoom": 0,
 		"components": [
 			{
 				"name": "button",

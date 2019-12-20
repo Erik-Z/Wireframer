@@ -1,1 +1,8 @@
 node_modules
+.firebase
+build
+.firebaserc
+database.rules.json
+firebase.json
+firestore.rules
+firestore.indexes.json

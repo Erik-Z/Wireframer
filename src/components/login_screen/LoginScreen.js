@@ -37,6 +37,15 @@ class LoginScreen extends Component {
     props.login(authData);
   }
 
+  handleGuestLogin = (e) => {
+    e.preventDefault();
+    const { firebase } = this.props;
+    firebase.auth().signInWithEmailAndPassword(
+      'guest@guest.com',
+      'password',
+    )
+  }
+
   render() {
     const { auth, authError } = this.props;
     if (auth.uid) {
@@ -58,6 +67,8 @@ class LoginScreen extends Component {
             </div>
             <div className="input-field">
               <button type="submit" className="btn pink lighten-1 z-depth-0">Login</button>
+              <span>          </span>
+              <button type="submit" className="btn blue lighten-1 z-depth-0" onClick={this.handleGuestLogin}>Guest Login</button>
               {authError ? <div className="red-text center"><p>{authError}</p></div> : null}
             </div>
           </form>
